@@ -1,0 +1,107 @@
+https://www.edureka.co/blog/hadoop-streaming-mapreduce-program/
+
+
+Create a file mapper.py and paste the following.
+
+
+#!/usr/bin/python
+import sys
+#Word Count Example
+# input comes from standard input STDIN
+for line in sys.stdin:
+	line = line.strip() #remove leading and trailing whitespaces
+	words = line.split() #split the line into words and returns as a list
+	for word in words:
+	#write the results to standard output STDOUT
+		print('%s$%s' % (word,1)) #Emit the word
+
+
+
+Create a file reducer.py and paste the following.
+
+
+#!/usr/bin/python
+import sys
+from operator import itemgetter
+# using a dictionary to map words to their counts
+current_word = None
+current_count = 0
+word = None
+# input comes from STDIN
+for line in sys.stdin:
+	line = line.strip()
+	word,count = line.split('$',1)
+	#print(count)
+	try:
+		count = int(count)
+	except ValueError:
+		continue
+	if current_word == word:
+		current_count += count
+	else:
+		if current_word:
+			print ('%s$%s' % (current_word, current_count))
+		current_count = count
+		current_word = word
+if current_word == word:
+	print ('%s$%s' % (current_word,current_count))
+
+
+
+Create a file word.txt and paste the following.
+
+Cat mouse lion deer Tiger lion Elephant lion deer
+
+
+
+
+Now open the terminal and open go the location where these files are saved.
+Suppose we create a folder sds on the Desktop and save these files in it.
+Hence to the folder sds by following command:
+
+
+cd /home/sd/Desktop/sds
+
+
+Then type the following commands on that terminal:
+
+
+
+1) Run the mapper by following command:
+
+cat word.txt | python3 mapper.py
+
+2) Run reducer.py
+
+
+cat word.txt | python3 mapper.py | sort -k1,1 | python3 reducer.py
+
+
+
+3) Running the Python Code on Hadoop by following commands.
+
+
+hadoop fs -mkdir /user
+
+
+hadoop fs -mkdir /user/edureka
+
+
+hdfs dfs -put /home/sd/Desktop/sds/word.txt /user/edureka
+
+
+hadoop jar /usr/local/work/hadoop/share/hadoop/tools/lib/hadoop-streaming-2.7.3.jar -file /home/sd/Desktop/sds/mapper.py -mapper 'python3 mapper.py' -file   /home/sd/Desktop/sds/reducer.py -reducer 'python3 reducer.py' -input /user/edureka/word.txt -output /user/edureka/Wordcountnew
+
+
+
+
+
+
+
+
+
+
+
+
+
+

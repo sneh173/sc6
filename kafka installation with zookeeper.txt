@@ -1,0 +1,91 @@
+First check out for installation of java then::::
+
+
+Step 2 - ZooKeeper Framework Installation
+Step 2.1 - Download ZooKeeper
+To install ZooKeeper framework on your machine, visit the following link and download the latest version of ZooKeeper.
+
+http://zookeeper.apache.org/releases.html
+As of now, latest version of ZooKeeper is 3.4.6 (ZooKeeper-3.4.6.tar.gz).
+
+Step 2.2 - Extract tar file
+Extract tar file using the following command
+
+$ cd opt/
+$ tar -zxf zookeeper-3.4.6.tar.gz
+$ cd zookeeper-3.4.6
+$ mkdir data
+Step 2.3 - Create Configuration File
+Open Configuration File named conf/zoo.cfg using the command vi “conf/zoo.cfg” and all the following parameters to set as starting point.
+
+$ vi conf/zoo.cfg
+tickTime=2000
+dataDir=/path/to/zookeeper/data
+clientPort=2181
+initLimit=5
+syncLimit=2
+Once the configuration file has been saved successfully and return to terminal again, you can start the zookeeper server.
+
+Step 2.4 - Start ZooKeeper Server
+$ bin/zkServer.sh start
+After executing this command, you will get a response as shown below -
+
+$ JMX enabled by default
+$ Using config: /Users/../zookeeper-3.4.6/bin/../conf/zoo.cfg
+$ Starting zookeeper ... STARTED
+Step 2.5 - Start CLI
+$ bin/zkCli.sh
+After typing the above command, you will be connected to the zookeeper server and will get the below response.
+
+Connecting to localhost:2181
+................
+................
+................
+Welcome to ZooKeeper!
+................
+................
+WATCHER::
+WatchedEvent state:SyncConnected type: None path:null
+[zk: localhost:2181(CONNECTED) 0]
+Step 2.6 - Stop Zookeeper Server
+After connecting the server and performing all the operations, you can stop the zookeeper server with the following command -
+
+$ bin/zkServer.sh stop
+Now you have successfully installed Java and ZooKeeper on your machine. Let us see the steps to install Apache Kafka.
+
+Step 3 - Apache Kafka Installation
+Let us continue with the following steps to install Kafka on your machine.
+
+Step 3.1 - Download Kafka
+To install Kafka on your machine, click on the below link -
+
+https://www.apache.org/dyn/closer.cgi?path=/kafka/0.9.0.0/kafka_2.11-0.9.0.0.tgz
+Now the latest version i.e., – kafka_2.11_0.9.0.0.tgz will be downloaded onto your machine.
+
+Step 3.2 - Extract the tar file
+Extract the tar file using the following command -
+
+$ cd opt/
+$ tar -zxf kafka_2.11.0.9.0.0 tar.gz
+$ cd kafka_2.11.0.9.0.0
+Now you have downloaded the latest version of Kafka on your machine.
+
+Step 3.3 - Start Server
+You can start the server by giving the following command -
+
+$ bin/kafka-server-start.sh config/server.properties
+After the server starts, you would see the below response on your screen -
+
+$ bin/kafka-server-start.sh config/server.properties
+[2016-01-02 15:37:30,410] INFO KafkaConfig values:
+request.timeout.ms = 30000
+log.roll.hours = 168
+inter.broker.protocol.version = 0.9.0.X
+log.preallocate = false
+security.inter.broker.protocol = PLAINTEXT
+…………………………………………….
+…………………………………………….
+Step 4 - Stop the Server
+After performing all the operations, you can stop the server using the following command -
+
+$ bin/kafka-server-stop.sh config/server.properties

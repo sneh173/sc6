@@ -1,0 +1,5 @@
+link for r prog----------------> https://www.youtube.com/watch?v=tCjns0EpAo8&list=PLFAYD0dt5xCzTQHDhMPZwBoaAXWeVhZzg
+link for kafka practical---------->https://www.youtube.com/watch?v=TU_6yFW-kTQ
+link for mapreduce example--------->https://mapr.com/blog/how-write-mapreduce-program/
+link for votecount example mapreduce---->https://github.com/satishpatil2k13/Horton_Works-Hadoop-Tutorials/blob/master/Community/T09_Write_And_Run_Your_Own_MapReduce_Java_Program_Poll_Result_Analysis.md
+link for flume twitter project------>https://www.tutorialspoint.com/apache_flume/fetching_twitter_data.htm

@@ -1,0 +1,256 @@
+Hadoop
+start-all.sh
+jps
+#######################################################
+PIG:
+
+
+Pig local mode
+pig -x local
+
+Pig in (hdfs)
+pig –x mapreduce
+######################################################
+Outside pig
+nano data.txt;
+Then type the following: 
+{(3,8,9)} 
+{(1,4,7)} 
+{(2,5,8)} 
+
+cat data; 
+{(3,8,9)} 
+{(1,4,7)} 
+{(2,5,8)} 
+
+Inside pig
+To load inside pig
+A = LOAD 'data.txt' AS (B: bag {T: tuple(t1:int, t2:int, t3:int)});
+(OR) 
+
+A = LOAD 'data.txt' AS (B: {T: (t1:int, t2:int, t3:int)}); 
+ 
+DESCRIBE A;
+ Output: A: {B: {T: (t1: int,t2: int,t3: int)}}
+ 
+DUMP A;
+Output: 
+({(3,8,9)}) 
+({(1,4,7)}) 
+({(2,5,8)})
+
+#####################################################
+nano data.txt
+Then type the following:
+(3,8,9)  
+(1,4,7) 
+(2,5,8) 
+
+cat data.txt; 
+(3,8,9)  
+(1,4,7) 
+(2,5,8) 
+
+(inside grunt shell)
+
+A = LOAD data AS(F:tuple(f1:int,f2:int,f3:int));
+  
+DUMP A; 
+Output:
+((3,8,9),(1,4,7),(2,5,8))
+#################################################################################################################################
+
+Create a directory in HDFS for storing pig related data.
+sd@sd:~$ hdfs dfsadmin -safemode leave
+sd@sd:~$ hadoop fs -mkdir /pigdata
+
+##########################################################
+eg
+Outside grunt
+
+sd@sd:~$ nano student.txt
+
+001,Rajiv,Reddy,9848022337,Hyderabad
+002,siddarth,Battacharya,9848022338,Kolkata
+003,Rajesh,Khanna,9848022339,Delhi
+004,Preethi,Agarwal,9848022330,Pune
+
+Copy student.txt file from local filesystem into HDFS.
+Type the following command: 
+
+sd@sd:~$ hadoop fs -put student.txt  /pigdata/student.txt
+#####################################################################################################################################
+eg
+Importing data from mapreduce to pig
+pig –x mapreduce
+
+Inside grunt
+student = LOAD '/pigdata/student.txt' USING PigStorage(',') as ( id:int, firstname:chararray, lastname:chararray, phone:chararray, city:chararray );
+##########################################################################################################################################
+???????????????????????
+A stored file is only obtained in mapreduce(hdfs) mode of pig
+
+STORE Relation_name INTO ' required_directory_path ' [USING function];
+
+student = LOAD '/pig_data/student.txt' USING PigStorage(',') as ( id:int, firstname:chararray, lastname:chararray, phone:chararray, city:chararray );
+STORE student INTO ' hdfs://localhost:9000/pig_Output/ ' USING PigStorage (',');
+######################################################################################################################################
+Inside grunt
+Dump student;
+illustrate student;
+describe student;
+
+#########################################################################
+##Group by is use to sort the data in ascending order
+grunt> Group_data = GROUP Relation_name BY age; 
+grunt> group_data = GROUP student_details by age;
+grunt> dump group_data;
+##########################################################################
+JOINS:
+nano customers.txt
+data
+cat customers.txt
+sd@sd:~$ hadoop fs -put customers.txt  /pigdata/customers.txt
+                      
+SELF JOIN:
+grunt> customers1 = LOAD '/pig_data/customers.txt' USING PigStorage(',') as (id:int, name:chararray, age:int, address:chararray, salary:int);## to import in mapreduce 
+grunt> customers2 = LOAD '/pig_data/customers.txt' USING PigStorage(',') as (id:int, name:chararray, age:int, address:chararray, salary:int);
+
+grunt> customers3 = JOIN customers1 BY id, customers2 BY id; 
+
+grunt> Dump customers3;
+
+Output
+(1,Ramesh,32,Ahmedabad,2000,1,Ramesh,32,Ahmedabad,2000)
+(2,Khilan,25,Delhi,1500,2,Khilan,25,Delhi,1500) 
+(3,kaushik,23,Kota,2000,3,kaushik,23,Kota,2000) 
+(4,Chaitali,25,Mumbai,6500,4,Chaitali,25,Mumbai,6500)
+(5,Hardik,27,Bhopal,8500,5,Hardik,27,Bhopal,8500) 
+(6,Komal,22,MP,4500,6,Komal,22,MP,4500) 
+(7,Muffy,24,Indore,10000,7,Muffy,24,Indore,10000)
+
+INNER JOIN:
+grunt> coustomer_orders = JOIN customers BY id, orders BY customer_id;
+grunt> Dump coustomer_orders;
+
+Output
+(2,Khilan,25,Delhi,1500,101,2009-11-20 00:00:00,2,1560) 
+(3,kaushik,23,Kota,2000,100,2009-10-08 00:00:00,3,1500) 
+(3,kaushik,23,Kota,2000,102,2009-10-08 00:00:00,3,3000) 
+(4,Chaitali,25,Mumbai,6500,103,2008-05-20 00:00:00,4,2060)
+
+LEFT OUTER:
+grunt> Relation3_name = JOIN Relation1_name BY id LEFT OUTER, Relation2_name BY customer_id;
+grunt> Dump outer_left; 
+
+Output
+(1,Ramesh,32,Ahmedabad,2000,,,,)
+ (2,Khilan,25,Delhi,1500,101,2009-11-20 00:00:00,2,1560) 
+(3,kaushik,23,Kota,2000,100,2009-10-08 00:00:00,3,1500) 
+(3,kaushik,23,Kota,2000,102,2009-10-08 00:00:00,3,3000) 
+(4,Chaitali,25,Mumbai,6500,103,2008-05-20 00:00:00,4,2060) 
+(5,Hardik,27,Bhopal,8500,,,,)  
+(6,Komal,22,MP,4500,,,,) 
+(7,Muffy,24,Indore,10000,,,,)
+
+RIGHT OUTER:
+grunt> outer_right = JOIN customers BY id RIGHT, orders BY customer_id; 
+
+FULL OUTER:
+grunt> outer_full = JOIN customers BY id FULL OUTER, orders BY customer_id; 
+#########################################################################################
+grunt> SPLIT student_details into student_details1 if age<23, student_details2 if (22<age and age>25);
+Dump student_details1; 
+grunt> Dump student_details2;
+#############################################
+filter_data = FILTER student_details BY city == 'Chennai’; 
+distinct_data = DISTINCT student_details;
+grunt> foreach_data = FOREACH student_details GENERATE id,age,city;
+
+
+#################################################################################################################
+HIVE
+Inside hive
+show databases
+create database userdb;
+drop database userdb;
+
+hive> CREATE TABLE  employee ( eid int, name String, age int , destination String, salary String)
+COMMENT ‘Employee details’
+ROW FORMAT DELIMITED
+FIELDS TERMINATED BY ‘\t’
+LINES TERMINATED BY ‘\n’;
+OR
+hive> create table road (id int,name VARCHAR(20),des string,year int) row format delimited fields terminated by ',';
+
+Outside hive
+nano emp.txt
+Data
+
+Inside hive
+Local mode
+Hive>  load data local inpath  ‘emp.txt’ into table employee;
+
+Hdfs mode
+outside hive
+hadoop fs –put emp.txt /emp.txt
+###############################################################################
+Inside hive
+Hive> load data inpath  ‘/emp.txt’ into table employee;
+
+Rename table
+ALTER TABLE employee RENAME TO emp;
+
+Rename col name
+hive> ALTER TABLE employee CHANGE name ename String;
+
+Add new column
+hive> ALTER TABLE employee ADD COLUMNS (dept STRING);
+hive> ALTER TABLE employee ADD COLUMNS (dept STRING COMMENT 'Department name');
+
+Drop table
+hive> DROP TABLE employee;
+
+Create view
+hive > CREATE VIEW EMP_VIEW AS SELECT name, age FROM  employee;
+hive > SELECT * from EMP_VIEW
+
+Delete a record 
+hive > DELETE FROM EMP_VIEW WHERE age = 22;
+
+Dropping a View
+Hive> DROP VIEW EMP _VIEW;
+#############################################################################
+
+JOINS
+INNER JOIN
+hive> SELECT  ID, NAME, AMOUNT, DATE  
+FROM CUSTOMERS 
+INNER JOIN ORDERS
+ON CUSTOMERS.ID = ORDERS.CUSTOMER_ID;
+
+LEFT JOIN
+hive> SELECT  ID, NAME, AMOUNT, DATE  
+FROM CUSTOMERS 
+LEFT OUTER JOIN ORDERS
+ON CUSTOMERS.ID = ORDERS.CUSTOMER_ID;
+
+RIGHT JOIN
+hive> SELECT  ID, NAME, AMOUNT, DATE  
+FROM CUSTOMERS 
+RIGHT OUTER JOIN ORDERS
+ON CUSTOMERS.ID = ORDERS.CUSTOMER_ID;
+
+FULL JOIN
+hive> SELECT  ID, NAME, AMOUNT, DATE  
+FROM CUSTOMERS 
+FULL OUTER JOIN ORDERS
+ON CUSTOMERS.ID = ORDERS.CUSTOMER_ID;
+
+################################################################
+GROUP BY
+hive> SELECT Dept,count(*) FROM employee GROUP BY DEPT;
+
+ORDER BY
+SELECT * FROM CUSTOMERS ORDER BY NAME DESC; 
+ 

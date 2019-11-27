@@ -1,0 +1,104 @@
+package wakad;
+
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.conf.Configured;
+import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.mapreduce.Job;
+import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
+import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
+import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
+import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
+import org.apache.hadoop.util.Tool;
+import org.apache.hadoop.util.ToolRunner;
+
+public class VoteCountApplication extends Configured implements Tool {
+
+	public static void main(String[] args) throws Exception {
+		int res = ToolRunner.run(new VoteCountApplication(), args);
+		System.exit(res);
+	}
+
+	@Override
+	public int run(String[] args) throws Exception {
+
+		Job job = new Job(getConf(), "VoteCountApplication");
+		job.setOutputKeyClass(Text.class);
+		job.setOutputValueClass(IntWritable.class);
+
+		job.setMapperClass(VoteCountMapper.class);
+		job.setReducerClass(VoteCountReducer.class);
+
+		job.setInputFormatClass(TextInputFormat.class);
+		job.setOutputFormatClass(TextOutputFormat.class);
+
+		FileInputFormat.setInputPaths(job, new Path(args[0]));
+		FileOutputFormat.setOutputPath(job, new Path(args[1]));
+
+		job.setJarByClass(VoteCountApplication.class);
+
+		return (job.waitForCompletion(true)) ? 0 : 1;
+	}
+}
+
+
+
+
+package wakad;
+
+import java.io.IOException;
+
+import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.mapreduce.Mapper;
+
+public class VoteCountMapper extends Mapper<Object, Text, Text, IntWritable> {
+
+    private final static IntWritable one = new IntWritable(1);
+
+    @Override
+    public void map(Object key, Text value, Context output) throws IOException,
+            InterruptedException {
+
+        //If more than one word is present, split using white space.
+        String[] words = value.toString().split(" ");
+        //Only the first word is the candidate name
+        output.write(new Text(words[0]), one);
+    }
+}
+
+
+paste following in votecount reducer class
+
+
+package wakad;
+import java.io.IOException;
+import java.util.Iterator;
+import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.mapreduce.Reducer;
+
+public class VoteCountReducer extends Reducer<Text, IntWritable, Text, IntWritable> {
+
+    @Override
+    public void reduce(Text key, Iterable<IntWritable> values, Context output)
+            throws IOException, InterruptedException {
+        int voteCount = 0;
+        for(IntWritable value: values){
+            voteCount+= value.get();
+        }
+        output.write(key, new IntWritable(voteCount));
+    }
+} 
+
+
+
+
+
+
+hadoop fs -mkdir /usr/local/work/hadoop/input9881
+hadoop fs -put /home/ands/Desktop/voter.txt /usr/local/work/hadoop/input9881
+hadoop jar vora1.jar /usr/local/work/hadoop/input9881 /dec229
+
+

@@ -1,0 +1,74 @@
+pig:
+
+outside-
+safemode leave      hdfs dfsadmin -safemode leave
+make directory      hadoop fs -mkdir /pigdata
+hdfs -put             hdfs fs -put student.txt /pigdata/student.txt
+nano data.txt
+cat data.txt
+inside grunt-
+load using pigstorage  student= LOAD '/pigdata/student.txt' USING PigStorage(',') as (id:int,name:chararray);
+joins:
+customers3 = JOIN customers1 by id, customers2 by id;
+outer_right =JOIN customers BY id RIGHT OUTER, orders BY customer_id;
+dump customers3;
+
+sqoop:
+localhost:50070
+
+install mysql-
+sudo apt-get update
+sudo apt-get install mysql-server
+sudo ufw allow mysql                 password:sd
+sysytemctl start mysql
+systemctl enable mysql
+/usr/bin/mysql -u root -p  password:password
+
+IMPORT
+mysql> create database mumbai;
+use mumbai;
+create table emp(id int,salary int);
+INSERT INTO emp(id,salary) VALUES (1,200),(2,300);
+select * from emp;
+exit;
+
+outside-
+sqoop import -m 1 -connect jdbc:mysql://localhost:3306/mumbai -username root -password password -table emp --target-dir /sqoopdatadir
+
+(check for part in firfox)
+hadoop fs -ls /sqoopdatadir/part-m-00000
+hadoop fs -cat /sqoopdatadir/part-m-00000
+
+EXPORT
+data on desktop sin.txt
+add data in the file:
+1,sd
+2,po
+3,pq
+
+hadoop fs -put /home/sd/Desktop/sin.txt /sing
+/usr/bin/mysql -u root -p  password:password
+mysql> create database india;
+use india;
+
+create table student(id integer,name char(20));
+exit;
+
+sqoop export -m 1 -connect jdbc:mysql://localhost:3306/india -username root -password password --table student --export-dir /sing
+
+mysql> use india;
+select * from student;
+
+
+hive:
+nano file.txt
+cat file.txt
+hadoop fs -put file.txt /file.txt
+
+hive> create table FILE (ID int, NAME string) row format delimited fields terminated by ',';
+hive>load data inpath '/file.txt' into table file
+joins:
+hive> SELECT ID,NAME,AMOUNT,DATE_TIME
+        FROM CUSTOMERS
+        INNER JOIN ORDERS
+        ON CUSTOMERS.ID=ORDERS.CUSTOMER_ID;

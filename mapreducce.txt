@@ -1,0 +1,70 @@
+﻿Requirement of java6(jdk 1.6)
+
+Step1: 
+Open Eclipse IDE and create a new project with 3 class files – WordCount.java , WordCountMapper.java and WordCountReducer.java
+
+
+Step2:
+Now Click on Project tab and go to Properties.Under Libraries tab, go to java build path and 
+click Add External JARs and select all the jars in the folder
+/usr/local/work/hadoop/share/hadoop/common 
+and /usr/local/work/hadoop/share/hadoop/mapreduce folders(outside visible folders) 
+and /usr/local/work/hadoop/share/hadoop/hdfs(outside visible folders and lib folder).
+
+
+step3:
+Now Click on the Run tab and click Run-Configurations. Click on New Configuration button on 
+the left-top side and Apply after filling the following properties.
+    
+Name – Any name will do – Ex: WordCountConfig
+    
+Project – Browse and select your project
+    
+Main Class – Select WordCount.java – this is our main class
+
+
+Step4:
+ Now click on File tab and select Export. under Java, select Runnable Jar.In Launch Config – select the 
+config fie you created (WordCountConfig). 
+    Select an export destination ( lets say desktop.) 
+    
+Under Library handling, select Extract Required Libraries into generated JAR and click Finish.
+    
+Right-Click the jar file, go to Properties and under Permissions tab, Check Allow executing file as a program.
+ and give Read and Write access to all the users.
+
+
+Step5:
+Make a hdfs directory ( Note: These directories are not listed when ls is used in the 
+terminal and they are also not visible in the File Browser )
+
+hadoop dfs -mkdir -p /usr/local/hadoop/input
+
+
+Step6:
+Copy the sample input text file into this hdfs directory –  
+hadoop dfs -copyFromLocal /home/ands/Desktop/raj.txt /usr/local/work/hadoop/input
+
+cd /home/ands/Desktop
+
+
+Step7:
+To run mapreduce:
+
+hadoop jar andy.jar packagename.classname /usr/local/work/hadoop/input /usr/local/work/hadoop/output
+
+   in my case:
+
+hadoop jar andy.jar anand1.WordCount /usr/local/work/hadoop/input /usr/local/work/hadoop/output
+
+or
+hadoop jar andy.jar WordCount /usr/local/work/hadoop/input /usr/local/work/hadoop/output
+
+Step8:
+To view the wordcount output
+hdfs dfs -cat /usr/local/work/hadoop/output/part-r-00000
+ 
+                              or 
+
+hdfs dfs -cat /usr/local/work/hadoop/output/part-00000
+

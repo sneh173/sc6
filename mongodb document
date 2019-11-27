@@ -1,0 +1,168 @@
+
+mongodb is document oriented nosql database
+relational databases have tables,coloumns and rows which are related to each other
+but in noql ,the collections or data are not related to each other and are hence nosql
+mongodb is schema free database and is based on binary json ob bson format
+group of documents -----> collections
+simple query language used over here
+
+
+Installation of mongodb
+to install mongodb ::::
+sudo apt-get install mongodb
+after that update it so that it can meet new requirements by:
+sudo apt-get update
+start mongodb using command (administrative privileges)::::
+sudo service mongodb start
+then go to mongo shell using command :: mongo
+test is  default database to which it will be connected
+also the version will be displayed over there
+
+get into database using command :::  use andy;
+
+check the current database using command  ::: db;
+
+
+*******crud operations ---> create,read,update,delete operations in mongo db
+create using insert()
+read using find()
+update using update()
+and delete using remove()
+
+inserting a document in collection
+
+db.employeedetails.insert({name:"employee1",salary:20000});
+ |             \         \
+ |              \         \
+ |               \       inserting a new document in the collection
+  db represents   \      (in this doc two keys present)
+cureent database   \
+                    employeedetails is name of collection 
+                    in db database,if not found ,new will be
+                    created
+json objects are created and works on key,value pairs so if we say that we are using json format in  mongodb so it is considering name as key and employee1 as value also it is written in javascript as 
+<script -----
+var obj1 = {name:"employee1"}  // json object being created
+</script>
+now finding documents from the collection :: db.employeedetails.find();
+it will show the document with its object id,this object id is used to recogonize this document also it can be used just like primary key,so no specific field needed to be added for identification
+ 
+mongo db is nosql database ---> docement database(data or records stored as documents in json syntax(javascript syntax oriented database)
+no predefined schema present here
+very easy to scale as compared to sql or relational databases
+
+
+documents are json objects or javascript objects 
+{
+field1:value1
+}
+
+in these documents we can have values in array form as well as object  or array of objects form just like ::
+
+{
+ firstname:"anand",
+ lastname:"mishra",
+ placeslived:["delhi","pune"],                                                                     ----------------> array type
+ adress :{street:"rt",city :"newyork"}                                                              ---------------->object type
+contact : [{name:"anurag",relationship:"brother"},{name:"atul",relationship:"friend"}]              ----------------->array of objects
+}
+
+
+
+so firstly before creating a databsae a user will be  created using :::
+db.createUser ({
+ user : "anand",
+ pwd: "anand",
+ roles: ["readwrite","dbadmin"]
+})
+it would show user created successfully
+
+collections ---> collections are similar to tables in a relational database
+made using :: db.createcollection("customers");
+
+to see all the collections in database
+show collections;
+
+we can insert more than one docs as :::
+db.employeedetails.insert({name:"employee1",salary:20000},{name:"employee2",salary:30000});
+
+
+another great advantage of mongodb nosql over relational database ::
+db.employeedetails.insert({name:"employee1",salary:20000},{name:"employee2",salary:30000},{name:"employee3",salary:40000,gender:"male"});
+every time its not compulsory to add same no of fields in the document,the no of fields may be added as per requirement like here gender field is added.
+
+
+check using db.employeedetails.find();
+u can see all the documents with their fields
+
+also u can see the neat orientation of documents using pretty function as ::
+db.employeedetails.find().pretty();
+
+
+for updation of record of employee1 in document  we can do ::
+db.employeedetails.update({name:"employee1"},{name:"employee1",salary:20000,gender:"female"}
+in the parentheses we need to mention firstly the field on which we need to get the record and then after comma we mention the full updation like here we wanted to add female as the field in the existing doc of employee 1
+or if u want to add the field in this document withot writing entire document again then u can us e set operator for that purpose 
+db.employeedetails.update({name:"employee1"},{$set:{gender:"female"}});
+suppose we want to add the field of age as well then:
+db.employeedetails.update({name:"employee1"},{$set:{age:45}});
+now we have an inc operator which can increment values like here if we need to increment the value of age then:
+db.employeedetails.update({name:"employee1"},{$inc:{age:5}});
+this will increment the value of age by 5 years
+now we have an unset operator which is used to remove a field
+db.employeedetails.update({name:"employee1"},{$unset:{age:1}});
+
+rename operator used to rename and can be used like :::
+db.employeedetails.update({name:"employee1"},{$rename:{"salary":"tanqhuah"}});
+
+removal of a document ::
+db.employeedetails.remove({name:"employee1"})
+
+removal of only first steven record:::
+db.employeedetails.remove({name:"employee1"},{justOne:true});
+
+to find any record or document we do ::::::  
+
+db.employeedetails.find({name:"employee2"});
+will return the document of employee 2
+if u want to search documents of employee 1 and employee 2 both,then we can use or operator and pass array of both needed records
+db.employeedetails.find({$or:[{name:"employee1"},{name:"employee2"});
+
+if u want all documents of people with gender male then:::::
+db.employeedetails.find({gender:"male"})
+
+suppose we need those people whose age is below 25 then ::
+db.employeedetails.find({age:{$lt:25}});
+for properly oriented result ::::: 
+db.employeedetails.find({age:{$lt:25}}).pretty();
+gt for greater than
+lte for less than or equals to
+gte for greater than or equals to
+if u are finding any field which is in object form in document the u need to specify the name of the fields in quotes
+like at the top of document we specified the address as object so while searching specific adress 
+mention as
+db.employeedetails.find({"address.street":"rt"}});
+
+suppose u want to query an array like as we specified places lived in above example then suppose we need documents of all people who have pune in their array of placeslived then :::::
+db.employeedetails.find({placeslived:"pune"});
+suppose u want the results in sorted order then ::
+db.employeedetails.find().sort();
+just simply insert sorting way in parameter(1 for ascending and -1 for descending)
+db.employeedetails.find().sort({age:1});
+counting the no of documents :
+db.employeedetails.find().count();
+passing no parameters in find method means all the records
+ every time records will look too messy ..just use pretty() at the end always while record retreival for beautiful record arrangement
+source : http://www.youtube.com/watch?v=pWbMrx5rVBE
+
+
+
+
+mongodb vs rdbms
+
+collection vs tables
+documents vs rows
+fields vs coloumn
+a collection isnt strict about what goes in it(its schemaless)
+
+
